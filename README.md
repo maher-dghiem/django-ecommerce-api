@@ -1,4 +1,3 @@
-README
 Django E‑Commerce REST API
 A production‑ready backend for online stores built with Django, Django REST Framework, and PostgreSQL. Designed for secure authentication, reliable payments, and scalable performance.
 
