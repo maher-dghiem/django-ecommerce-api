@@ -1,4 +1,3 @@
-# products/views.py
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
@@ -23,21 +22,45 @@ class IsStaffOrReadOnly(permissions.BasePermission):
         return request.user and request.user.is_staff
 
 
-class ProductListThrottle(AnonRateThrottle):
-    scope = "product_list"
+class ProductListAnonThrottle(AnonRateThrottle):
+    scope = "product_list_anon"
 
+class ProductListUserThrottle(UserRateThrottle):
+    scope = "product_list_user"
 
-class ProductDetailThrottle(UserRateThrottle):
-    scope = "product_detail"
+class ProductDetailAnonThrottle(UserRateThrottle):
+    scope = "product_detail_anon"
+
+class ProductDetailUserThrottle(UserRateThrottle):
+    scope = "product_detail_user"
+
+class ProductWriteThrottle(UserRateThrottle):
+    scope = "product_write"
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsStaffOrReadOnly]
-    throttle_classes = [ProductListThrottle, ProductDetailThrottle]
+    throttle_classes = []
     search_fields = ['name', 'description']
     ordering_fields = ['price', 'created_at', 'stock']
+
+    def get_throttles(self):
+        if self.action == "list":
+            if self.request.user.is_authenticated:
+                return [ProductListUserThrottle()]
+            return [ProductListAnonThrottle()]
+
+        if self.action == "retrieve":
+            if self.request.user.is_authenticated:
+                return [ProductDetailUserThrottle()]
+            return [ProductDetailAnonThrottle()]
+
+        if self.action in ("create", "update", "partial_update", "destroy"):
+            return [ProductWriteThrottle()]
+
+        return super().get_throttles()
 
     @method_decorator(cache_page(60 * 5))  # Cache for 5 minutes
     def list(self, request, *args, **kwargs):
@@ -48,3 +71,4 @@ class ProductViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """Retrieve single product with caching"""
         return super().retrieve(request, *args, **kwargs)
+
