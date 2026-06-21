@@ -48,30 +48,3 @@ class ProductViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         """Retrieve single product with caching"""
         return super().retrieve(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        """Create product - staff only"""
-        if not request.user.is_staff:
-            return Response(
-                {"detail": "Only staff can create products."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().create(request, *args, **kwargs)
-
-    def update(self, request, *args, **kwargs):
-        """Update product - staff only"""
-        if not request.user.is_staff:
-            return Response(
-                {"detail": "Only staff can update products."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().update(request, *args, **kwargs)
-
-    def destroy(self, request, *args, **kwargs):
-        """Delete product - staff only"""
-        if not request.user.is_staff:
-            return Response(
-                {"detail": "Only staff can delete products."},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        return super().destroy(request, *args, **kwargs)
