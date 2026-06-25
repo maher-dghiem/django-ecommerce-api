@@ -28,7 +28,7 @@ class ProductListAnonThrottle(AnonRateThrottle):
 class ProductListUserThrottle(UserRateThrottle):
     scope = "product_list_user"
 
-class ProductDetailAnonThrottle(UserRateThrottle):
+class ProductDetailAnonThrottle(AnonRateThrottle):
     scope = "product_detail_anon"
 
 class ProductDetailUserThrottle(UserRateThrottle):
