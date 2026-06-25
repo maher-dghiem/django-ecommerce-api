@@ -43,7 +43,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsStaffOrReadOnly]
     throttle_classes = []
-    search_fields = ['name', 'description']
+    search_fields = ['price','name', 'description']
     ordering_fields = ['price', 'created_at', 'stock']
 
     def get_throttles(self):
