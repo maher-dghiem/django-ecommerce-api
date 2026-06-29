@@ -11,15 +11,6 @@ from .models import Cart, CartItem
 from .serializers import CartItemReadSerializer, CartItemWriteSerializer
 from products.models import Product
 
-
-class IsCartOwner(permissions.BasePermission):
-    """
-    Allow users to access only their own cart.
-    """
-    def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated
-
-
 class CartListThrottle(UserRateThrottle):
     scope = "cart_list"
 
@@ -29,7 +20,6 @@ class CartModifyThrottle(UserRateThrottle):
 
 
 class CartViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated, IsCartOwner]
     throttle_classes = [CartListThrottle, CartModifyThrottle]
 
     def _get_or_create_cart(self, user):
